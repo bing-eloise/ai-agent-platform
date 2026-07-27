@@ -1,4 +1,5 @@
 from config.settings import APP_NAME,VERSION
+from src.llm import ask_llm
 
 def print_banner():
     """打印程序欢迎信息"""
@@ -16,7 +17,9 @@ def chat():
             print("AI > Bye!")
             break
 
-        print(f"AI > 你刚刚输入的是：{user_input}")
+        answer = ask_llm(user_input)
+
+        print(f"AI > {answer}")
 
 def main():
     print_banner()
