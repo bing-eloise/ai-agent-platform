@@ -6,6 +6,7 @@
 
 - [x] Day0：环境搭建
 - [x] Day1：企业级项目结构
+- [x] Day2: 接入 DeepSeek API
 
 ## 项目结构
 
