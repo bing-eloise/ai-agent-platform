@@ -1,5 +1,6 @@
 from config.settings import APP_NAME,VERSION
 from src.llm import ask_llm
+from src.memory import ChatMemory
 
 def print_banner():
     """打印程序欢迎信息"""
@@ -9,6 +10,8 @@ def print_banner():
     print("=" * 40)
 
 def chat():
+
+    memory = ChatMemory()
     """简单聊天循环"""
     while True:
         user_input = input("You > ")
@@ -17,8 +20,11 @@ def chat():
             print("AI > Bye!")
             break
 
-        answer = ask_llm(user_input)
+        memory.add_user_message(user_input)
+        messages = memory.get_messages()
+        answer = ask_llm(messages)
 
+        memory.add_assistant_message(answer)
         print(f"AI > {answer}")
 
 def main():

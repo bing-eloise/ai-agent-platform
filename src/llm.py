@@ -14,16 +14,11 @@ MODEL = os.getenv("MODEL")
 # 创建客户端
 client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
 
-def ask_llm(message: str) -> str:
+def ask_llm(messages: list) -> str:
     """调用大语言模型"""
     response = client.chat.completions.create(
         model=MODEL,
-        messages=[
-            {
-                "role": "user",
-                "content": message
-            }
-        ]
+        messages=messages
     )
 
     return response.choices[0].message.content
