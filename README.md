@@ -7,6 +7,7 @@
 - [x] Day0：环境搭建
 - [x] Day1：企业级项目结构
 - [x] Day2: 接入 DeepSeek API
+- [x] Day3: Chat Memory上下文记忆
 
 ## 项目结构
 
