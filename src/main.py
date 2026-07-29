@@ -1,6 +1,7 @@
 from config.settings import APP_NAME,VERSION
-from src.llm import ask_llm
+from src.llm import ask_llm_stream
 from src.memory import ChatMemory
+from src.logger import logger
 
 def print_banner():
     """打印程序欢迎信息"""
@@ -22,10 +23,21 @@ def chat():
 
         memory.add_user_message(user_input)
         messages = memory.get_messages()
-        answer = ask_llm(messages)
+
+        logger.info(f"User request: {user_input}")
+
+        answer = ""
+
+        print("AI >", end="")
+
+        for token in ask_llm_stream(messages):
+            print(token, end="", flush=True)
+            answer += token
 
         memory.add_assistant_message(answer)
-        print(f"AI > {answer}")
+
+        logger.info("LLM response success")
+        print()
 
 def main():
     print_banner()

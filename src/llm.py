@@ -22,3 +22,16 @@ def ask_llm(messages: list) -> str:
     )
 
     return response.choices[0].message.content
+
+def ask_llm_stream(messages:list):
+
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=messages,
+        stream=True
+    )
+
+    for chunk in response:
+        content = (chunk.choices[0].delta.content)
+        if content:
+            yield content

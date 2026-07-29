@@ -8,6 +8,7 @@
 - [x] Day1：企业级项目结构
 - [x] Day2: 接入 DeepSeek API
 - [x] Day3: Chat Memory上下文记忆
+- [x] Day4: Streaming输出 + Logging日志系统
 
 ## 项目结构
 
