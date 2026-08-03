@@ -13,7 +13,7 @@ def print_banner():
 def chat():
 
     memory = ChatMemory()
-    """简单聊天循环"""
+    """聊天循环"""
     while True:
         user_input = input("You > ")
 

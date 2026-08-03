@@ -9,14 +9,35 @@
 - [x] Day2: 接入 DeepSeek API
 - [x] Day3: Chat Memory上下文记忆
 - [x] Day4: Streaming输出 + Logging日志系统
+- [x] Day5: Memory System(SQLite持久化 + 历史恢复)
 
 ## 项目结构
 
+```text
 project01_ai_chat/
 ├── src/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── memory.py
+│   ├── database.py
+│   ├── llm.py
+│   └── logger.py
 ├── config/
+│   └── settings.py
 ├── tests/
+│   └── .gitkeep
 ├── logs/
+    └── .gitkeep
+```
+
+### Architecture
+
+- `src/memory.py` — 短期记忆管理（ChatMemory），包含支持历史消息剪裁和上下文窗口控制
+- `src/database.py` — 对话历史持久化（DatabaseManager），基于 SQLite
+- `src/llm.py` — DeepSeek API 流式调用封装
+- `src/logger.py` — 日志系统配置
+- `src/main.py` — 程序入口与对话主循环
+- `config/settings.py` — 环境变量与配置管理
 
 ## 技术栈
 
