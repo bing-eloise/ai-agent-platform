@@ -10,6 +10,7 @@
 - [x] Day3: Chat Memory上下文记忆
 - [x] Day4: Streaming输出 + Logging日志系统
 - [x] Day5: Memory System(SQLite持久化 + 历史恢复)
+- [x] Day6: Prompt管理 + 多角色助手
 
 ## 项目结构
 
@@ -38,6 +39,7 @@ project01_ai_chat/
 - `src/logger.py` — 日志系统配置
 - `src/main.py` — 程序入口与对话主循环
 - `config/settings.py` — 环境变量与配置管理
+- `src/prompt.py` - System Prompt管理和角色多模式定义
 
 ## 技术栈
 

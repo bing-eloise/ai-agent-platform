@@ -2,6 +2,7 @@ from config.settings import APP_NAME,VERSION
 from src.llm import ask_llm_stream
 from src.memory import ChatMemory
 from src.logger import logger
+from src.prompt import get_prompt
 
 def print_banner():
     """打印程序欢迎信息"""
@@ -13,6 +14,23 @@ def print_banner():
 def chat():
 
     memory = ChatMemory()
+
+    print("""
+    请选择助手类型：
+    
+    1. 普通助手
+    2. 编程助手
+    3. 科研助手
+    """)
+    choice = input("请输入：")
+    role_map = {
+        "1": "default",
+        "2": "coding",
+        "3": "research"
+    }
+    role = role_map.get(choice, "default")
+    print(f"当前模式： {role}")
+
     """聊天循环"""
     while True:
         user_input = input("You > ")
@@ -22,7 +40,8 @@ def chat():
             break
 
         memory.add_user_message(user_input)
-        messages = memory.get_messages()
+        messages = [{"role":"system", "content":get_prompt(role)}]
+        messages.extend(memory.get_messages())
 
         logger.info(f"User request: {user_input}")
 
