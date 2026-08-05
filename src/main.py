@@ -54,6 +54,9 @@ def chat():
             answer += token
 
         memory.add_assistant_message(answer)
+        print()
+        print("Context Info:")
+        print(memory.get_memory_info())
 
         logger.info("LLM response success")
         print()

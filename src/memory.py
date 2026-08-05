@@ -1,10 +1,13 @@
 import uuid
 from datetime import datetime
 from src.database import DatabaseManager
+from src.tokenizer import estimate_tokens
+from config.settings import MAX_HISTORY, MAX_TOKENS
+from src.logger import logger
 
 class ChatMemory:
     """Conversation Memory 管理用户聊天上下文"""
-    def __init__(self, max_history=10, max_tokens=2000):
+    def __init__(self, max_history=MAX_HISTORY, max_tokens=MAX_TOKENS):
         # 创建ChatMemory时会自动创建会话
         self.db = DatabaseManager()
         # 会话ID
@@ -54,23 +57,30 @@ class ChatMemory:
             for message in self.messages
         ]
 
-    def _estimate_tokens(self):
-        total = 0
-        for message in self.messages:
-            total += len(message["content"])
-        return total
+    def get_token_count(self):
+        return estimate_tokens(self.messages)
 
     def _limit_history(self):
         """第一层限制：消息数量"""
         if len(self.messages) > self.max_history:
-            self.messages = (self.messages[-self.max_history:])
+            removed = len(self.messages) - self.max_history
+            self.messages = self.messages[-self.max_history:]
+            logger.warning(f"History limit reached, removed {removed} messages")
+
         """第二层限制：token数量"""
-        while self._estimate_tokens() > self.max_tokens:
+        while self.get_token_count() > self.max_tokens:
             self.messages.pop(0)
+            logger.warning(
+                f"Token limit reached, removed old message. "
+                f"Current tokens: {self.get_token_count()}"
+            )
 
     def get_memory_info(self):
+        current_tokens = self.get_token_count()
         return {
             "conversation_id": self.conversation_id,
             "message_count": len(self.messages),
-            "estimated_tokens": self._estimate_tokens()
+            "estimated_tokens": current_tokens,
+            "max_tokens": self.max_tokens,
+            "usage_rate": round(current_tokens / self.max_tokens * 100, 2)
         }
