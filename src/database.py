@@ -37,6 +37,17 @@ class DatabaseManager:
             )
             """
         )
+        # 摘要表
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS summaries
+            (
+                conversation_id TEXT PRIMARY KEY,
+                summary TEXT,
+                updated_time TEXT
+            )
+            """
+        )
         self.conn.commit()
 
     def save_conversation(self, conversation_id):
@@ -52,6 +63,45 @@ class DatabaseManager:
             )
         )
         self.conn.commit()
+
+    def save_summary(self, conversation_id, summary):
+        cursor = self.conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO summaries
+            (
+                conversation_id,
+                summary,
+                updated_time
+            )
+            VALUES (?,?,?)
+            ON CONFLICT(conversation_id)
+            DO UPDATE SET
+                summary=excluded.summary,
+                updated_time=excluded.updated_time
+            """,
+            (
+                conversation_id,
+                summary,
+                datetime.now().isoformat()
+            )
+        )
+        self.conn.commit()
+
+    def load_summary(self, conversation_id):
+        cursor = self.conn.cursor()
+        cursor.execute(
+            """
+            SELECT summary
+            FROM summaries
+            WHERE conversation_id=?
+            """,
+            (conversation_id,)
+        )
+        result = cursor.fetchone()
+        if result:
+            return result[0]
+        return ""
 
     def save_message(self, conversation_id, role, content):
         cursor = self.conn.cursor()

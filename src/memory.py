@@ -4,6 +4,7 @@ from src.database import DatabaseManager
 from src.tokenizer import estimate_tokens
 from config.settings import MAX_HISTORY, MAX_TOKENS
 from src.logger import logger
+from src.summary import SummaryMemory
 
 class ChatMemory:
     """Conversation Memory 管理用户聊天上下文"""
@@ -25,6 +26,8 @@ class ChatMemory:
         self.max_tokens = max_tokens
         # 消息列表
         self.messages = self.db.load_messages(self.conversation_id)
+        # 超出限制时总结
+        self.summary_memory = SummaryMemory(self.db, self.conversation_id)
 
     def add_user_message(self, content: str):
         self.messages.append(
@@ -49,16 +52,32 @@ class ChatMemory:
         self._limit_history()
 
     def get_messages(self):
-        return [
-            {
-                "role": message["role"],
-                "content": message["content"]
-            }
-            for message in self.messages
-        ]
+        messages = []
+        summary = self.summary_memory.get_summary()
+        if summary:
+            messages.append(
+                {
+                    "role": "system",
+                    "content": f"以下是之前聊天摘要：{summary}"
+                }
+            )
+        messages.extend(
+            [
+                {
+                    "role": message["role"],
+                    "content": message["content"]
+                }
+                for message in self.messages
+            ]
+        )
+        return messages
 
     def get_token_count(self):
-        return estimate_tokens(self.messages)
+        total_messages = self.messages.copy()
+        summary = self.summary_memory.get_summary()
+        if summary:
+            total_messages.insert(0, {"role": "system", "content": summary})
+        return estimate_tokens(total_messages)
 
     def _limit_history(self):
         """第一层限制：消息数量"""
@@ -69,9 +88,16 @@ class ChatMemory:
 
         """第二层限制：token数量"""
         while self.get_token_count() > self.max_tokens:
-            self.messages.pop(0)
+            old_messages = self.messages[:-5]
+            if old_messages:
+                summary = self.summary_memory.generate_summary(old_messages)
+                self.summary_memory.update_summary(summary)
+                self.messages = self.messages[-5:]
+            else:
+                break
             logger.warning(
-                f"Token limit reached, removed old message. "
+                f"Token limit reached. "
+                f"History summarized. "
                 f"Current tokens: {self.get_token_count()}"
             )
 
