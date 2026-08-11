@@ -3,11 +3,14 @@ import os
 
 os.makedirs("logs", exist_ok=True)
 
-logging.basicConfig(
-    filename="logs/app.log",
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    encoding="utf-8"
-)
+logger = logging.getLogger("Project01_AI_Chat")
+logger.setLevel(logging.INFO)
 
-logger = logging.getLogger(__name__)
+formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
+
+file_handler = logging.FileHandler("logs/app.log", encoding="utf-8")
+
+file_handler.setFormatter(formatter)
+
+if not logger.handlers:
+    logger.addHandler(file_handler)

@@ -13,6 +13,7 @@
 - [x] Day6: Prompt管理 + 多角色助手
 - [x] Day7: Token统计 + 上下文窗口控制
 - [x] Day8: AI Memory系统优化（自动摘要 + Summary持久化）
+- [x] Day9: 异常处理与稳定性增强（Exception + Retry + Logging优化 + 自动化测试）
 
 ## 项目结构
 
@@ -26,11 +27,15 @@ project01_ai_chat/
 │   ├── summary.py
 │   ├── prompt.py
 │   ├── llm.py
-│   └── logger.py
+│   ├── logger.py
+│   ├── exceptions.py
+│   └── utils/
+│       └── retry.py
 ├── config/
 │   └── settings.py
 ├── tests/
-│   └── .gitkeep
+│   ├── test_retry.py
+│   └── test_exception.py
 ├── logs/
     └── .gitkeep
 ```
@@ -42,6 +47,8 @@ project01_ai_chat/
 - `src/summary.py` — 基于LLM生成对话摘要，支持增量摘要更新
 - `src/llm.py` — DeepSeek API 流式调用封装
 - `src/logger.py` — 日志系统配置
+- `src/exceptions.py` — 项目统一异常体系，用于规范化处理 LLM、数据库、配置等异常
+- `src/utils/retry.py` — Retry工具模块，实现失败重试和指数退避机制，提高API调用稳定性
 - `src/main.py` — 程序入口与对话主循环
 - `config/settings.py` — 环境变量与配置管理
 - `src/prompt.py` - System Prompt管理和角色多模式定义
@@ -54,6 +61,11 @@ project01_ai_chat/
 - Token-aware Context Management
 - Automatic Conversation Summarization
 - Summary Memory Recovery
+- Exception Handling
+- API Retry Mechanism
+- Exponential Backoff
+- Logging-based Error Tracking
+- Automated Testing
 
 ## 技术栈
 
@@ -62,6 +74,7 @@ project01_ai_chat/
 - GitHub
 - SQLite
 - DeepSeek API
+- Pytest
 
 ## 作者
 
