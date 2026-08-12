@@ -14,6 +14,7 @@
 - [x] Day7: Token统计 + 上下文窗口控制
 - [x] Day8: AI Memory系统优化（自动摘要 + Summary持久化）
 - [x] Day9: 异常处理与稳定性增强（Exception + Retry + Logging优化 + 自动化测试）
+- [x] Day10: RAG基础（Document Loader + Text Splitter + Embedding + Vector Store + Semantic Retrieval）
 
 ## 项目结构
 
@@ -29,13 +30,26 @@ project01_ai_chat/
 │   ├── llm.py
 │   ├── logger.py
 │   ├── exceptions.py
-│   └── utils/
-│       └── retry.py
+│   ├── utils/
+│   │   └── retry.py
+│   └── rag/
+│       ├── __init__.py
+│       ├── document_loader.py
+│       ├── text_splitter.py
+│       ├── embeddings.py
+│       └── vector_store.py
+├── data/
+│   └── test.txt
 ├── config/
 │   └── settings.py
 ├── tests/
 │   ├── test_retry.py
-│   └── test_exception.py
+│   ├── test_exception.py
+│   ├── test_document_loader.py
+│   ├── test_text_splitter.py
+│   ├── test_embeddings.py
+│   ├── test_vector_store.py
+│   └── test_rag_pipeline.py
 ├── logs/
     └── .gitkeep
 ```
@@ -52,6 +66,10 @@ project01_ai_chat/
 - `src/main.py` — 程序入口与对话主循环
 - `config/settings.py` — 环境变量与配置管理
 - `src/prompt.py` - System Prompt管理和角色多模式定义
+- `src/rag/document_loader.py` — 本地文档加载，目前支持 TXT 文本读取与基础文件校验
+- `src/rag/text_splitter.py` — 文本 Chunk 切分，支持 Chunk Size 与 Chunk Overlap
+- `src/rag/embeddings.py` — 使用多语言 Sentence Transformer 将文本和用户 Query 转换为向量
+- `src/rag/vector_store.py` — 内存向量存储，通过 Cosine Similarity 实现 Top-K 语义检索
 
 ## Core Features
 - DeepSeek API Chat
@@ -66,6 +84,13 @@ project01_ai_chat/
 - Exponential Backoff
 - Logging-based Error Tracking
 - Automated Testing
+- Document Loading
+- Text Chunking with Overlap
+- Multilingual Text Embedding
+- Vector Storage
+- Cosine Similarity Search
+- Top-K Semantic Retrieval
+- RAG Retrieval Pipeline
 
 ## 技术栈
 
@@ -75,6 +100,9 @@ project01_ai_chat/
 - SQLite
 - DeepSeek API
 - Pytest
+- Sentence Transformers
+- NumPy
+- Hugging Face Model
 
 ## 作者
 
