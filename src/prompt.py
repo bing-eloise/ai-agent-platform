@@ -48,3 +48,21 @@ PROMPTS = {
 
 def get_prompt(role="default"):
     return PROMPTS.get(role, PROMPTS["default"])
+
+def build_rag_prompt(context: str, question: str) -> str:
+    """构造RAG知识库问答Prompt"""
+    return f"""
+    你是一个知识库问答助手。
+    请根据下面提供的知识库内容回答用户问题。
+    
+    回答要求：
+    1. 优先使用知识库中的明确表述。
+    2. 只回答用户提出的问题。
+    3. 不要添加知识库中不存在的事实。
+    4. 回答清晰、简洁、准确。
+    
+    知识库内容：{context}
+    用户问题：{question}
+    
+    请根据上述知识库内容直接回答。
+    """

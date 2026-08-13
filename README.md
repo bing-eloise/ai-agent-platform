@@ -15,6 +15,7 @@
 - [x] Day8: AI Memory系统优化（自动摘要 + Summary持久化）
 - [x] Day9: 异常处理与稳定性增强（Exception + Retry + Logging优化 + 自动化测试）
 - [x] Day10: RAG基础（Document Loader + Text Splitter + Embedding + Vector Store + Semantic Retrieval）
+- [x] Day11: 知识库问答（Retriever + RAG Prompt + Similarity Threshold + KnowledgeBase + LLM Generation）
 
 ## 项目结构
 
@@ -30,6 +31,7 @@ project01_ai_chat/
 │   ├── llm.py
 │   ├── logger.py
 │   ├── exceptions.py
+│   ├── tokenizer.py
 │   ├── utils/
 │   │   └── retry.py
 │   └── rag/
@@ -37,7 +39,10 @@ project01_ai_chat/
 │       ├── document_loader.py
 │       ├── text_splitter.py
 │       ├── embeddings.py
-│       └── vector_store.py
+│       ├── vector_store.py
+│       ├── retriever.py
+│       ├── rag_service.py
+│       └── knowledge_base.py
 ├── data/
 │   └── test.txt
 ├── config/
@@ -49,7 +54,11 @@ project01_ai_chat/
 │   ├── test_text_splitter.py
 │   ├── test_embeddings.py
 │   ├── test_vector_store.py
-│   └── test_rag_pipeline.py
+│   ├── test_rag_pipeline.py
+│   ├── test_retriever.py
+│   ├── test_rag_prompt.py
+│   ├── test_rag_service.py
+│   └── test_knowledge_base.py
 ├── logs/
     └── .gitkeep
 ```
@@ -70,6 +79,9 @@ project01_ai_chat/
 - `src/rag/text_splitter.py` — 文本 Chunk 切分，支持 Chunk Size 与 Chunk Overlap
 - `src/rag/embeddings.py` — 使用多语言 Sentence Transformer 将文本和用户 Query 转换为向量
 - `src/rag/vector_store.py` — 内存向量存储，通过 Cosine Similarity 实现 Top-K 语义检索
+- `src/rag/retriever.py` — 将用户 Query 转换为向量并执行 Top-K 语义检索，同时负责构造知识库 Context
+- `src/rag/rag_service.py` — 负责 Retrieval、相关性阈值判断、RAG Prompt 构造以及 LLM 回答生成
+- `src/rag/knowledge_base.py` — 知识库统一入口，封装文档加载、Chunk、Embedding、Vector Store、Retriever 和 RAG Service
 
 ## Core Features
 - DeepSeek API Chat
@@ -91,6 +103,12 @@ project01_ai_chat/
 - Cosine Similarity Search
 - Top-K Semantic Retrieval
 - RAG Retrieval Pipeline
+- Knowledge Base Question Answering
+- RAG Context Construction
+- Similarity Threshold Filtering
+- Knowledge-bound Answer Generation
+- KnowledgeBase Unified Interface
+- Mock-based RAG Testing
 
 ## 技术栈
 
