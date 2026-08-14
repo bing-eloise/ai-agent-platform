@@ -16,12 +16,22 @@
 - [x] Day9: 异常处理与稳定性增强（Exception + Retry + Logging优化 + 自动化测试）
 - [x] Day10: RAG基础（Document Loader + Text Splitter + Embedding + Vector Store + Semantic Retrieval）
 - [x] Day11: 知识库问答（Retriever + RAG Prompt + Similarity Threshold + KnowledgeBase + LLM Generation）
+- [x] Day12: Tool Calling + Agent（Tool Registry + Tool Schema + Tool Executor + Agent Loop）
 
 ## 项目结构
 
 ```text
 project01_ai_chat/
 ├── src/
+│   ├── tools/
+│   │   ├── __init__.py
+│   │   ├── calculator.py
+│   │   └── registry.py
+│   │
+│   ├── agent/
+│   │   ├── __init__.py
+│   │   ├── executor.py
+│   │   └── agent.py
 │   ├── __init__.py
 │   ├── main.py
 │   ├── memory.py
@@ -82,6 +92,11 @@ project01_ai_chat/
 - `src/rag/retriever.py` — 将用户 Query 转换为向量并执行 Top-K 语义检索，同时负责构造知识库 Context
 - `src/rag/rag_service.py` — 负责 Retrieval、相关性阈值判断、RAG Prompt 构造以及 LLM 回答生成
 - `src/rag/knowledge_base.py` — 知识库统一入口，封装文档加载、Chunk、Embedding、Vector Store、Retriever 和 RAG Service
+- `src/tools/calculator.py` — 基础计算器工具，支持加减乘除等结构化调用
+- `src/tools/registry.py` — Tool Registry 与 Tool Schema 管理，负责工具注册以及向 LLM 描述可用工具
+- `src/agent/executor.py` — Tool Executor，根据工具名称和结构化参数查找并执行对应 Python Tool
+- `src/agent/agent.py` — Agent 核心控制层，实现 LLM Tool Calling、工具执行、Tool Result 回传及最终答案生成
+- `src/llm.py` — 在原有普通调用和流式调用基础上增加 Tool Calling 能力
 
 ## Core Features
 - DeepSeek API Chat
@@ -109,6 +124,14 @@ project01_ai_chat/
 - Knowledge-bound Answer Generation
 - KnowledgeBase Unified Interface
 - Mock-based RAG Testing
+- LLM Tool Calling
+- Calculator Tool
+- Tool Registry
+- Tool Schema
+- Tool Executor
+- Automatic Tool Selection
+- Agent Loop
+- Mock-based Agent Testing
 
 ## 技术栈
 

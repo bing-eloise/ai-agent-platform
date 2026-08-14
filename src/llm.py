@@ -45,3 +45,16 @@ def ask_llm_stream(messages:list):
     except Exception as e:
         logger.error(f"LLM stream failed: {str(e)}")
         raise LLMError("LLM流式调用失败") from e
+
+def ask_llm_with_tools(messages: list, tools: list):
+    try:
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=messages,
+            tools=tools,
+            tool_choice="auto"
+        )
+        return response.choices[0].message
+    except Exception as e:
+        logger.error(f"LLM tool calling failed: {str(e)}")
+        raise LLMError("LLM Tool Calling失败") from e
