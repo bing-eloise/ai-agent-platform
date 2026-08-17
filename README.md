@@ -17,12 +17,18 @@
 - [x] Day10: RAG基础（Document Loader + Text Splitter + Embedding + Vector Store + Semantic Retrieval）
 - [x] Day11: 知识库问答（Retriever + RAG Prompt + Similarity Threshold + KnowledgeBase + LLM Generation）
 - [x] Day12: Tool Calling + Agent（Tool Registry + Tool Schema + Tool Executor + Agent Loop）
+- [x] Day13: FastAPI服务化（Chat API + RAG API + Agent API + Swagger + API Testing）
 
 ## 项目结构
 
 ```text
 project01_ai_chat/
 ├── src/
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── app.py
+│   │   ├── schemas.py
+│   │   └── routes.py
 │   ├── tools/
 │   │   ├── __init__.py
 │   │   ├── calculator.py
@@ -97,6 +103,9 @@ project01_ai_chat/
 - `src/agent/executor.py` — Tool Executor，根据工具名称和结构化参数查找并执行对应 Python Tool
 - `src/agent/agent.py` — Agent 核心控制层，实现 LLM Tool Calling、工具执行、Tool Result 回传及最终答案生成
 - `src/llm.py` — 在原有普通调用和流式调用基础上增加 Tool Calling 能力
+- `src/api/app.py` — FastAPI 应用入口，负责服务初始化、Router 注册和全局异常处理
+- `src/api/routes.py` — 定义 `/chat`、`/rag`、`/agent` 等业务接口
+- `src/api/schemas.py` — 基于 Pydantic 定义 API 请求和响应数据模型
 
 ## Core Features
 - DeepSeek API Chat
@@ -132,6 +141,14 @@ project01_ai_chat/
 - Automatic Tool Selection
 - Agent Loop
 - Mock-based Agent Testing
+- FastAPI REST Service
+- Chat API
+- RAG API
+- Agent API
+- Pydantic Validation
+- Global API Exception Handling
+- Swagger / OpenAPI Documentation
+- API Automated Testing
 
 ## 技术栈
 
