@@ -18,6 +18,9 @@
 - [x] Day11: 知识库问答（Retriever + RAG Prompt + Similarity Threshold + KnowledgeBase + LLM Generation）
 - [x] Day12: Tool Calling + Agent（Tool Registry + Tool Schema + Tool Executor + Agent Loop）
 - [x] Day13: FastAPI服务化（Chat API + RAG API + Agent API + Swagger + API Testing）
+- [x] Day14: 多模态能力（Image Processing + Vision Provider + Vision API + Mock Vision）
+> Vision 模块目前采用可插拔 Provider 架构，并通过 Mock Vision Provider
+> 完成完整多模态处理链路；真实 Vision Model Provider 将作为后续扩展能力接入。
 
 ## 项目结构
 
@@ -38,6 +41,12 @@ project01_ai_chat/
 │   │   ├── __init__.py
 │   │   ├── executor.py
 │   │   └── agent.py
+│   ├── multimodal/
+│   │   ├── __init__.py
+│   │   ├── image_loader.py
+│   │   ├── message_builder.py
+│   │   ├── provider.py
+│   │   └── vision.py
 │   ├── __init__.py
 │   ├── main.py
 │   ├── memory.py
@@ -106,6 +115,11 @@ project01_ai_chat/
 - `src/api/app.py` — FastAPI 应用入口，负责服务初始化、Router 注册和全局异常处理
 - `src/api/routes.py` — 定义 `/chat`、`/rag`、`/agent` 等业务接口
 - `src/api/schemas.py` — 基于 Pydantic 定义 API 请求和响应数据模型
+- `src/multimodal/image_loader.py` — 图片读取、格式与大小校验，并支持 Base64 / Data URL 编码
+- `src/multimodal/message_builder.py` — 构造文本 + 图片的多模态 Message
+- `src/multimodal/provider.py` — Vision Provider 抽象接口，实现视觉模型与业务逻辑解耦
+- `src/multimodal/vision.py` — Vision Service 与 Mock Vision Provider，实现统一图片理解调用入口
+- `src/api/routes.py` — 在原有 Chat、RAG、Agent API 基础上增加 `/vision` 图片上传接口
 
 ## Core Features
 - DeepSeek API Chat
@@ -149,6 +163,14 @@ project01_ai_chat/
 - Global API Exception Handling
 - Swagger / OpenAPI Documentation
 - API Automated Testing
+- Image Loading & Validation
+- Base64 Image Encoding
+- Multimodal Message Construction
+- Pluggable Vision Provider
+- Mock Vision Pipeline
+- FastAPI Image Upload
+- Vision API
+- Multimodal Automated Testing
 
 ## 技术栈
 

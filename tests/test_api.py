@@ -38,3 +38,27 @@ def test_agent_api():
         response = client.post("/agent", json={"message": "计算128乘以37"})
         assert response.status_code == 200
         assert "4736" in response.json()["answer"]
+
+def test_vision_api():
+    with patch(
+        "src.api.routes.vision_service.analyze_image",
+        return_value="Mock Vision Result: 图片分析完成。"
+    ):
+        with open("data/images/test.png", "rb") as image_file:
+            response = client.post(
+                "/vision",
+                data={"prompt": "请描述这张图片"},
+                files={"image": ("test.png", image_file, "image/png")
+                }
+            )
+    assert response.status_code == 200
+    assert ("Mock Vision Result" in response.json()["answer"])
+
+def test_vision_api_missing_prompt():
+    with open("data/images/test.png", "rb") as image_file:
+        response = client.post(
+            "/vision",
+            files={"image": ("test.png", image_file, "image/png")
+            }
+        )
+    assert response.status_code == 422
