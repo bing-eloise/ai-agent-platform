@@ -1,189 +1,840 @@
-# Project01 AI Chat
+# AI Agent Platform
 
-一个用于学习 AI 应用开发的聊天助手项目。
+A modular AI application platform built with Python, integrating conversational memory, RAG, tool calling, multi-tool agents, multimodal capabilities, and FastAPI services.
 
-## 当前进度
+> 本项目从基础 LLM Chat 逐步演进为一个模块化 AI Agent 应用，完整实现了从模型调用、上下文记忆、RAG 检索增强，到 Tool Calling、Agent、Multimodal、REST API 与 Docker 部署的 AI 应用开发链路。
 
-- [x] Day0：环境搭建
-- [x] Day1：企业级项目结构
-- [x] Day2: 接入 DeepSeek API
-- [x] Day3: Chat Memory上下文记忆
-- [x] Day4: Streaming输出 + Logging日志系统
-- [x] Day5: Memory System(SQLite持久化 + 历史恢复)
-- [x] Day6: Prompt管理 + 多角色助手
-- [x] Day7: Token统计 + 上下文窗口控制
-- [x] Day8: AI Memory系统优化（自动摘要 + Summary持久化）
-- [x] Day9: 异常处理与稳定性增强（Exception + Retry + Logging优化 + 自动化测试）
-- [x] Day10: RAG基础（Document Loader + Text Splitter + Embedding + Vector Store + Semantic Retrieval）
-- [x] Day11: 知识库问答（Retriever + RAG Prompt + Similarity Threshold + KnowledgeBase + LLM Generation）
-- [x] Day12: Tool Calling + Agent（Tool Registry + Tool Schema + Tool Executor + Agent Loop）
-- [x] Day13: FastAPI服务化（Chat API + RAG API + Agent API + Swagger + API Testing）
-- [x] Day14: 多模态能力（Image Processing + Vision Provider + Vision API + Mock Vision）
-> Vision 模块目前采用可插拔 Provider 架构，并通过 Mock Vision Provider
-> 完成完整多模态处理链路；真实 Vision Model Provider 将作为后续扩展能力接入。
+## Overview
 
-## 项目结构
+AI Agent Platform 是一个用于学习和实践现代 AI 应用开发的模块化项目。
+
+项目以大语言模型为核心，通过逐步构建 Memory、RAG、Tool Calling、Agent、Multimodal 等能力，将基础聊天程序扩展为可通过 FastAPI 对外提供服务的 AI 应用系统。
+
+项目重点不仅在于调用 LLM API，还包括 AI 应用中的核心工程问题：
+
+- 对话上下文管理与 SQLite 持久化
+- Token-aware 上下文窗口控制与自动摘要
+- 文档切分、Embedding、Vector Store 与语义检索
+- 基于知识库 Context 的 RAG 问答
+- LLM Tool Calling 与自动工具选择
+- Multi-Tool Agent 执行链路
+- 可插拔 Vision Provider 多模态架构
+- FastAPI REST API 与 Swagger / OpenAPI
+- 异常处理、Retry、Logging 与自动化测试
+- Docker 容器化部署
+
+## Features
+
+### AI Chat & Memory
+
+- DeepSeek OpenAI-compatible LLM integration
+- Streaming response
+- Multi-role system prompts
+- Conversation memory
+- SQLite persistent storage
+- Conversation history recovery
+- Token-aware context management
+- Automatic conversation summarization
+- Summary persistence and recovery
+
+### RAG
+
+- Local document loading
+- Configurable text chunking and chunk overlap
+- Multilingual text embeddings
+- In-memory vector store
+- Cosine similarity search
+- Top-K semantic retrieval
+- Similarity threshold filtering
+- RAG prompt construction
+- Knowledge-bound answer generation
+- Unified `KnowledgeBase` interface
+
+### Agent & Tool Calling
+
+- LLM Tool Calling
+- Structured Tool Schema
+- Tool Registry
+- Tool Executor
+- Automatic tool selection
+- Calculator Tool
+- RAG Search Tool
+- Multi-Tool Agent
+- Tool result feedback to LLM
+- No-tool direct response
+
+### Multimodal
+
+- Image loading and validation
+- Base64 / Data URL encoding
+- Multimodal message construction
+- Pluggable Vision Provider architecture
+- Vision Service
+- Mock Vision Provider
+- FastAPI image upload
+- Vision API
+
+> The current Vision module uses a pluggable Provider architecture. The complete multimodal processing pipeline is validated with a Mock Vision Provider, while a real vision model can be integrated through an additional Provider implementation.
+
+### API & Engineering
+
+- FastAPI REST service
+- `/chat` API
+- `/rag` API
+- `/agent` API
+- `/vision` API
+- `/health` health check
+- Pydantic request / response validation
+- Global exception handling
+- Retry with exponential backoff
+- Application logging
+- Swagger / OpenAPI documentation
+
+### Testing & Deployment
+
+- Pytest automated testing
+- Mock-based LLM testing
+- Mock-based RAG testing
+- Mock-based Agent testing
+- Mock-based Vision testing
+- Multi-Tool Agent testing
+- API automated testing
+- 75 automated tests
+- 84% overall test coverage
+- Docker containerization
+- Runtime environment variable injection
+- Containerized FastAPI deployment
+
+## Architecture
+
+```mermaid
+flowchart TD
+
+    User[User / Client] --> API[FastAPI Service]
+
+    API --> Chat[Chat]
+    API --> RAG[RAG Service]
+    API --> Agent[Agent]
+    API --> Vision[Vision Service]
+
+    Chat --> Memory[Chat Memory]
+    Memory --> DB[(SQLite)]
+    Memory --> Summary[Summary Memory]
+
+    RAG --> KB[KnowledgeBase]
+    KB --> Retriever[Retriever]
+    Retriever --> Embedding[Embedding Model]
+    Retriever --> VS[(Vector Store)]
+
+    Agent --> LLM[LLM]
+    Agent --> Registry[Tool Registry]
+    Registry --> Calculator[Calculator Tool]
+    Registry --> RAGTool[RAG Search Tool]
+    RAGTool --> KB
+
+    Chat --> LLM
+    RAG --> LLM
+    Summary --> LLM
+
+    Vision --> Provider[Vision Provider]
+    Provider --> Mock[Mock Vision Provider]
+```
+
+The system is organized into several independent layers:
+
+1. **LLM Layer** — provides standard completion, streaming response, and Tool Calling capabilities.
+2. **Memory Layer** — manages conversation history, SQLite persistence, token-aware context control, and automatic summarization.
+3. **RAG Layer** — handles document processing, embeddings, vector retrieval, context construction, and knowledge-based generation.
+4. **Agent Layer** — lets the LLM select and execute registered tools such as Calculator and RAG Search.
+5. **Multimodal Layer** — abstracts image understanding through a pluggable Vision Provider interface.
+6. **API Layer** — exposes Chat, RAG, Agent, and Vision capabilities through FastAPI.
+7. **Engineering Layer** — provides logging, retry, exception handling, automated testing, and Docker deployment.
+
+## Project Structure
 
 ```text
-project01_ai_chat/
+ai-agent-platform/
+├── config/
+│   └── settings.py
+│
+├── data/
+│   ├── images/
+│   │   └── test.png
+│   └── test.txt
+│
 ├── src/
+│   ├── agent/
+│   │   ├── __init__.py
+│   │   ├── agent.py
+│   │   └── executor.py
+│   │
 │   ├── api/
 │   │   ├── __init__.py
 │   │   ├── app.py
-│   │   ├── schemas.py
-│   │   └── routes.py
-│   ├── tools/
-│   │   ├── __init__.py
-│   │   ├── calculator.py
-│   │   └── registry.py
+│   │   ├── routes.py
+│   │   └── schemas.py
 │   │
-│   ├── agent/
-│   │   ├── __init__.py
-│   │   ├── executor.py
-│   │   └── agent.py
 │   ├── multimodal/
 │   │   ├── __init__.py
 │   │   ├── image_loader.py
 │   │   ├── message_builder.py
 │   │   ├── provider.py
 │   │   └── vision.py
-│   ├── __init__.py
-│   ├── main.py
-│   ├── memory.py
-│   ├── database.py
-│   ├── summary.py
-│   ├── prompt.py
-│   ├── llm.py
-│   ├── logger.py
-│   ├── exceptions.py
-│   ├── tokenizer.py
+│   │
+│   ├── rag/
+│   │   ├── __init__.py
+│   │   ├── document_loader.py
+│   │   ├── embeddings.py
+│   │   ├── knowledge_base.py
+│   │   ├── rag_service.py
+│   │   ├── retriever.py
+│   │   ├── text_splitter.py
+│   │   └── vector_store.py
+│   │
+│   ├── tools/
+│   │   ├── __init__.py
+│   │   ├── calculator.py
+│   │   ├── rag_tool.py
+│   │   └── registry.py
+│   │
 │   ├── utils/
 │   │   └── retry.py
-│   └── rag/
-│       ├── __init__.py
-│       ├── document_loader.py
-│       ├── text_splitter.py
-│       ├── embeddings.py
-│       ├── vector_store.py
-│       ├── retriever.py
-│       ├── rag_service.py
-│       └── knowledge_base.py
-├── data/
-│   └── test.txt
-├── config/
-│   └── settings.py
+│   │
+│   ├── __init__.py
+│   ├── database.py
+│   ├── exceptions.py
+│   ├── llm.py
+│   ├── logger.py
+│   ├── main.py
+│   ├── memory.py
+│   ├── prompt.py
+│   ├── summary.py
+│   └── tokenizer.py
+│
 ├── tests/
-│   ├── test_retry.py
-│   ├── test_exception.py
+│   ├── test_agent.py
+│   ├── test_api.py
+│   ├── test_api_schemas.py
+│   ├── test_calculator.py
+│   ├── test_database.py
 │   ├── test_document_loader.py
-│   ├── test_text_splitter.py
 │   ├── test_embeddings.py
-│   ├── test_vector_store.py
+│   ├── test_exception.py
+│   ├── test_image_loader.py
+│   ├── test_knowledge_base.py
+│   ├── test_memory.py
+│   ├── test_message_builder.py
+│   ├── test_multi_tool_agent.py
+│   ├── test_multi_tool_agent_mock.py
+│   ├── test_multi_tool_calling.py
 │   ├── test_rag_pipeline.py
-│   ├── test_retriever.py
 │   ├── test_rag_prompt.py
 │   ├── test_rag_service.py
-│   └── test_knowledge_base.py
-├── logs/
-    └── .gitkeep
+│   ├── test_retriever.py
+│   ├── test_retry.py
+│   ├── test_summary_memory.py
+│   ├── test_text_splitter.py
+│   ├── test_tokenizer.py
+│   ├── test_tool_executor.py
+│   ├── test_tool_registry.py
+│   ├── test_vector_store.py
+│   └── test_vision.py
+│
+├── .dockerignore
+├── .env.example
+├── .gitignore
+├── Dockerfile
+├── README.md
+└── requirements.txt
 ```
 
-### Architecture
+## Core Modules
 
-- `src/memory.py` — 短期记忆管理（ChatMemory），包含支持历史消息剪裁和上下文窗口控制，token数量检测，自动触发历史压缩
-- `src/database.py` — 对话历史持久化（DatabaseManager），基于 SQLite，保存聊天消息、摘要信息且支持历史恢复
-- `src/summary.py` — 基于LLM生成对话摘要，支持增量摘要更新
-- `src/llm.py` — DeepSeek API 流式调用封装
-- `src/logger.py` — 日志系统配置
-- `src/exceptions.py` — 项目统一异常体系，用于规范化处理 LLM、数据库、配置等异常
-- `src/utils/retry.py` — Retry工具模块，实现失败重试和指数退避机制，提高API调用稳定性
-- `src/main.py` — 程序入口与对话主循环
-- `config/settings.py` — 环境变量与配置管理
-- `src/prompt.py` - System Prompt管理和角色多模式定义
-- `src/rag/document_loader.py` — 本地文档加载，目前支持 TXT 文本读取与基础文件校验
-- `src/rag/text_splitter.py` — 文本 Chunk 切分，支持 Chunk Size 与 Chunk Overlap
-- `src/rag/embeddings.py` — 使用多语言 Sentence Transformer 将文本和用户 Query 转换为向量
-- `src/rag/vector_store.py` — 内存向量存储，通过 Cosine Similarity 实现 Top-K 语义检索
-- `src/rag/retriever.py` — 将用户 Query 转换为向量并执行 Top-K 语义检索，同时负责构造知识库 Context
-- `src/rag/rag_service.py` — 负责 Retrieval、相关性阈值判断、RAG Prompt 构造以及 LLM 回答生成
-- `src/rag/knowledge_base.py` — 知识库统一入口，封装文档加载、Chunk、Embedding、Vector Store、Retriever 和 RAG Service
-- `src/tools/calculator.py` — 基础计算器工具，支持加减乘除等结构化调用
-- `src/tools/registry.py` — Tool Registry 与 Tool Schema 管理，负责工具注册以及向 LLM 描述可用工具
-- `src/agent/executor.py` — Tool Executor，根据工具名称和结构化参数查找并执行对应 Python Tool
-- `src/agent/agent.py` — Agent 核心控制层，实现 LLM Tool Calling、工具执行、Tool Result 回传及最终答案生成
-- `src/llm.py` — 在原有普通调用和流式调用基础上增加 Tool Calling 能力
-- `src/api/app.py` — FastAPI 应用入口，负责服务初始化、Router 注册和全局异常处理
-- `src/api/routes.py` — 定义 `/chat`、`/rag`、`/agent` 等业务接口
-- `src/api/schemas.py` — 基于 Pydantic 定义 API 请求和响应数据模型
-- `src/multimodal/image_loader.py` — 图片读取、格式与大小校验，并支持 Base64 / Data URL 编码
-- `src/multimodal/message_builder.py` — 构造文本 + 图片的多模态 Message
-- `src/multimodal/provider.py` — Vision Provider 抽象接口，实现视觉模型与业务逻辑解耦
-- `src/multimodal/vision.py` — Vision Service 与 Mock Vision Provider，实现统一图片理解调用入口
-- `src/api/routes.py` — 在原有 Chat、RAG、Agent API 基础上增加 `/vision` 图片上传接口
+### LLM Layer
 
-## Core Features
-- DeepSeek API Chat
-- Streaming Response
+`src/llm.py`
+
+Provides the unified interface for LLM communication, including:
+
+- Standard chat completion
+- Streaming completion
+- Tool Calling
+- Retry and exception integration
+
+The project currently communicates with an OpenAI-compatible LLM API.
+
+### Memory System
+
+`src/memory.py`  
+`src/database.py`  
+`src/summary.py`  
+`src/tokenizer.py`
+
+Provides persistent conversational memory with:
+
+- SQLite message persistence
+- Conversation history recovery
+- Message history limits
+- Token-aware context control
+- Automatic history summarization
+- Persistent summary memory
+
+When the context exceeds the configured limit, older messages are summarized while recent messages remain available to the LLM.
+
+### RAG System
+
+`src/rag/`
+
+Implements the complete retrieval pipeline:
+
+```text
+Document
+   ↓
+Text Splitter
+   ↓
+Embedding Model
+   ↓
+Vector Store
+   ↓
+Retriever
+   ↓
+Similarity Filtering
+   ↓
+Context Construction
+   ↓
+LLM Generation
+```
+
+`KnowledgeBase` provides a unified interface over the complete RAG pipeline.
+
+### Agent System
+
+`src/agent/`  
+`src/tools/`
+
+Implements an LLM-driven Multi-Tool Agent:
+
+```text
+User Request
+     ↓
+LLM Tool Selection
+     ↓
+Tool Registry
+     ↓
+Tool Executor
+     ↓
+Tool Result
+     ↓
+LLM Final Response
+```
+
+Currently registered tools include:
+
+- `calculator` — structured mathematical calculation
+- `rag_search` — local knowledge base retrieval
+
+If no tool is required, the Agent returns the LLM response directly.
+
+### Multimodal System
+
+`src/multimodal/`
+
+Provides an extensible image-processing architecture:
+
+```text
+Image
+  ↓
+Image Loader
+  ↓
+Multimodal Message Builder
+  ↓
+Vision Service
+  ↓
+Vision Provider
+```
+
+The Vision layer uses a Provider abstraction so different vision models can be integrated without changing the upper-level business logic.
+
+The current implementation uses `MockVisionProvider` to validate the complete multimodal pipeline.
+
+### API Layer
+
+`src/api/`
+
+FastAPI exposes the core AI capabilities as REST services:
+
+- `GET /health` — service health check
+- `POST /chat` — standard LLM chat
+- `POST /rag` — knowledge base question answering
+- `POST /agent` — Multi-Tool Agent
+- `POST /vision` — image understanding
+
+Pydantic models provide request validation and FastAPI automatically generates Swagger / OpenAPI documentation.
+
+### Engineering Infrastructure
+
+The project also includes:
+
+- Unified application exceptions
+- Retry with exponential backoff
+- Application logging
+- Environment-based configuration
+- Pytest automated testing
+- Mock-based external dependency isolation
+- Test coverage reporting
+- Docker containerization
+
+## Quick Start
+
+### 1. Clone the Repository
+
+```bash
+git clone <your-repository-url>
+cd ai-agent-platform
+```
+
+> The repository name will be updated to `ai-agent-platform` in the final release.
+
+### 2. Create a Virtual Environment
+
+```bash
+python -m venv .venv
+```
+
+Activate the virtual environment.
+
+Windows:
+
+```bash
+.venv\Scripts\activate
+```
+
+macOS / Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+The project uses Python 3.12.
+
+### 4. Configure Environment Variables
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+On Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Then configure the required values in `.env`:
+
+```env
+API_KEY=your_api_key_here
+BASE_URL=your_api_base_url_here
+MODEL=your_model_name_here
+```
+
+> `.env` contains local configuration and should never be committed to version control.
+
+### 5. Start the FastAPI Service
+
+```bash
+uvicorn src.api.app:app --host 0.0.0.0 --port 8000
+```
+
+After startup, the service provides:
+
+- Health Check: `/health`
+- Swagger UI: `/docs`
+- OpenAPI Schema: `/openapi.json`
+
+## API Usage
+
+### Health Check
+
+```http
+GET /health
+```
+
+Response:
+
+```json
+{
+  "status": "OK"
+}
+```
+
+### Chat API
+
+```http
+POST /chat
+Content-Type: application/json
+```
+
+Request:
+
+```json
+{
+  "message": "What is RAG?"
+}
+```
+
+Response:
+
+```json
+{
+  "answer": "..."
+}
+```
+
+### RAG API
+
+```http
+POST /rag
+Content-Type: application/json
+```
+
+Request:
+
+```json
+{
+  "question": "What is the purpose of Chunk Overlap?"
+}
+```
+
+Response:
+
+```json
+{
+  "answer": "..."
+}
+```
+
+The RAG endpoint retrieves relevant context from the local knowledge base before generating the final answer.
+
+### Agent API
+
+```http
+POST /agent
+Content-Type: application/json
+```
+
+Request:
+
+```json
+{
+  "message": "Calculate 128 multiplied by 37."
+}
+```
+
+The Agent determines whether a registered tool is required. For this request, it can select the `calculator` tool automatically.
+
+Response:
+
+```json
+{
+  "answer": "128 multiplied by 37 equals 4736."
+}
+```
+
+The Agent can currently route requests between:
+
+```text
+User Request
+     ↓
+    Agent
+   ↙  ↓  ↘
+LLM  Calculator  RAG Search
+```
+
+### Vision API
+
+```http
+POST /vision
+Content-Type: multipart/form-data
+```
+
+Form fields:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `prompt` | string | Instruction for image analysis |
+| `image` | file | Image uploaded by the user |
+
+Example:
+
+```text
+prompt = "Describe this image."
+image  = test.png
+```
+
+> The current Vision API uses `MockVisionProvider` to validate the complete image upload and multimodal processing pipeline. A real vision model provider can be integrated through the existing Provider interface.
+
+## Docker Deployment
+
+The application can also be deployed as a Docker container.
+
+### Build the Image
+
+```bash
+docker build -t ai-agent-platform .
+```
+
+### Run the Container
+
+Pass environment variables at runtime instead of storing sensitive configuration inside the Docker image:
+
+```bash
+docker run \
+  --name ai-agent-platform \
+  -p 8000:8000 \
+  --env-file .env \
+  ai-agent-platform
+```
+
+Windows PowerShell can use the same command on one line:
+
+```powershell
+docker run --name ai-agent-platform -p 8000:8000 --env-file .env ai-agent-platform
+```
+
+Run in detached mode:
+
+```bash
+docker run -d --name ai-agent-platform -p 8000:8000 --env-file .env ai-agent-platform
+```
+
+Check running containers:
+
+```bash
+docker ps
+```
+
+View application logs:
+
+```bash
+docker logs ai-agent-platform
+```
+
+After the container starts, the FastAPI service is available on port `8000`.
+
+The Docker deployment has been validated against the following endpoints:
+
+- `/health`
+- `/chat`
+- `/rag`
+- `/agent`
+- `/vision`
+
+### Docker Security
+
+The `.dockerignore` file excludes local and sensitive runtime files such as:
+
+```text
+.env
+.venv/
+*.db
+logs/
+.coverage
+htmlcov/
+```
+
+Sensitive runtime configuration is injected through environment variables and is not embedded in the Docker image.
+
+## Testing & Coverage
+
+The project uses `pytest` for automated testing and `pytest-cov` for coverage analysis.
+
+Run all tests:
+
+```bash
+python -m pytest -v
+```
+
+Run tests with coverage:
+
+```bash
+python -m pytest --cov=src --cov=config --cov-report=term-missing
+```
+
+Current test status:
+
+```text
+75 tests passed
+84% overall coverage
+```
+
+The automated test suite covers the major application layers, including:
+
 - Conversation Memory
-- SQLite Persistent Storage
-- Token-aware Context Management
-- Automatic Conversation Summarization
-- Summary Memory Recovery
-- Exception Handling
-- API Retry Mechanism
-- Exponential Backoff
-- Logging-based Error Tracking
-- Automated Testing
-- Document Loading
-- Text Chunking with Overlap
-- Multilingual Text Embedding
-- Vector Storage
-- Cosine Similarity Search
-- Top-K Semantic Retrieval
-- RAG Retrieval Pipeline
-- Knowledge Base Question Answering
-- RAG Context Construction
-- Similarity Threshold Filtering
-- Knowledge-bound Answer Generation
-- KnowledgeBase Unified Interface
-- Mock-based RAG Testing
-- LLM Tool Calling
+- SQLite Persistence
+- Summary Memory
+- Token Estimation
+- RAG Pipeline
+- Retriever and Vector Store
+- KnowledgeBase
+- Tool Registry and Tool Executor
+- Multi-Tool Agent
+- FastAPI endpoints
+- Multimodal processing
+- Retry and exception handling
+
+External or expensive dependencies are isolated with Mock-based tests where appropriate, while integration tests validate the complete RAG and Agent execution paths.
+
+## Tech Stack
+
+| Category | Technology |
+| --- | --- |
+| Language | Python 3.12 |
+| LLM Integration | OpenAI-compatible API |
+| Current LLM Provider | DeepSeek |
+| API Framework | FastAPI |
+| API Schema | Pydantic |
+| ASGI Server | Uvicorn |
+| Database | SQLite |
+| Embedding | Sentence Transformers |
+| Vector Search | NumPy / Cosine Similarity |
+| ML Runtime | PyTorch / Transformers |
+| Testing | Pytest |
+| Coverage | pytest-cov |
+| HTTP Client | HTTPX |
+| Configuration | python-dotenv |
+| Containerization | Docker |
+| Version Control | Git / GitHub |
+
+## Development Roadmap
+
+The project was developed incrementally from a basic LLM chat application into a modular AI Agent platform.
+
+| Stage | Development |
+| --- | --- |
+| Day 0 | Development environment and project initialization |
+| Day 1 | Modular Python project structure |
+| Day 2 | OpenAI-compatible LLM API integration |
+| Day 3 | Conversation memory |
+| Day 4 | Streaming response and logging |
+| Day 5 | SQLite persistent memory and history recovery |
+| Day 6 | Prompt management and multi-role assistants |
+| Day 7 | Token estimation and context window control |
+| Day 8 | Automatic conversation summarization and summary persistence |
+| Day 9 | Exception handling, retry, logging improvements, and automated testing |
+| Day 10 | RAG foundation: document loading, text splitting, embeddings, vector store, and semantic retrieval |
+| Day 11 | Knowledge base QA: Retriever, RAG Prompt, similarity threshold, KnowledgeBase, and LLM generation |
+| Day 12 | Tool Calling and Agent: Tool Registry, Tool Schema, Tool Executor, and Agent Loop |
+| Day 13 | FastAPI service layer: Chat, RAG, Agent APIs, Swagger, and API testing |
+| Day 14 | Multimodal architecture: image processing, Vision Provider, Vision API, and Mock Vision |
+| Day 15 | Engineering integration: Multi-Tool Agent, RAG Tool, API refactoring, test coverage, Docker, and project packaging |
+
+### Evolution
+
+```text
+LLM Chat
+   ↓
+Conversation Memory
+   ↓
+Persistent & Summary Memory
+   ↓
+RAG
+   ↓
+Tool Calling
+   ↓
+Agent
+   ↓
+Multi-Tool Agent
+   ↓
+Multimodal
+   ↓
+FastAPI Service
+   ↓
+Testing & Docker
+```
+
+This incremental approach keeps each capability independently testable while gradually integrating them into a complete AI application architecture.
+
+## Design Decisions
+
+### 1. Modular Architecture
+
+Chat, Memory, RAG, Agent, Tool, Multimodal, and API capabilities are separated into independent modules instead of being implemented in a single application file.
+
+This reduces coupling and makes individual components easier to test and extend.
+
+### 2. Unified KnowledgeBase Interface
+
+The RAG pipeline is encapsulated behind `KnowledgeBase`:
+
+```text
+Document
+→ Chunk
+→ Embedding
+→ Vector Store
+→ Retriever
+→ RAG Service
+```
+
+Upper-level components do not need to manage individual RAG components directly.
+
+### 3. RAG as an Agent Tool
+
+Instead of maintaining Agent and RAG as completely isolated systems, the knowledge base is exposed to the Agent through `rag_search`.
+
+This allows the LLM to choose between:
+
+- Direct Response
 - Calculator Tool
-- Tool Registry
-- Tool Schema
-- Tool Executor
-- Automatic Tool Selection
-- Agent Loop
-- Mock-based Agent Testing
-- FastAPI REST Service
-- Chat API
-- RAG API
-- Agent API
-- Pydantic Validation
-- Global API Exception Handling
-- Swagger / OpenAPI Documentation
-- API Automated Testing
-- Image Loading & Validation
-- Base64 Image Encoding
-- Multimodal Message Construction
-- Pluggable Vision Provider
-- Mock Vision Pipeline
-- FastAPI Image Upload
-- Vision API
-- Multimodal Automated Testing
+- RAG Search Tool
 
-## 技术栈
+according to the user request.
 
-- Python 3.12
-- Git
-- GitHub
-- SQLite
-- DeepSeek API
-- Pytest
-- Sentence Transformers
-- NumPy
-- Hugging Face Model
+### 4. Lazy Initialization
 
-## 作者
+Heavy services such as the knowledge base are initialized only when required and reused afterward.
 
-bing-eloise
+This prevents application startup from unnecessarily loading embedding models and building the vector store before a RAG request is made.
+
+### 5. Pluggable Vision Provider
+
+The multimodal layer depends on a `VisionProvider` abstraction rather than a specific vision model.
+
+```
+Vision Service
+      ↓
+Vision Provider
+      ↓
+Model Implementation
+```
+
+The current project uses `MockVisionProvider` for complete pipeline validation while keeping the architecture ready for a real vision provider.
+
+### 6. Environment-based Configuration
+
+Runtime configuration is loaded from environment variables rather than hard-coded into the source code.
+
+`.env.example` documents the required configuration while local `.env` files remain outside version control and Docker build context.
+
+### 7. Mock + Integration Testing
+
+Mock tests isolate external dependencies such as LLM calls, while integration tests validate complete execution paths such as RAG retrieval and Multi-Tool Agent execution.
+
+This keeps the test suite stable while still validating real component integration.
+
+### 8. Containerized Deployment
+
+Docker packages the application and its runtime dependencies into a reproducible environment.
+
+Runtime configuration is injected when the container starts instead of being embedded into the image.
+
+## Author
+
+**bing-eloise**

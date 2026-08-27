@@ -1,17 +1,8 @@
-import os
-from dotenv import load_dotenv
 from openai import OpenAI
+from config.settings import API_KEY, BASE_URL, MODEL
 from src.exceptions import LLMError
 from src.logger import logger
 from src.utils.retry import retry
-
-# 加载 .env
-load_dotenv()
-
-# 读取配置
-API_KEY = os.getenv("API_KEY")
-BASE_URL = os.getenv("BASE_URL")
-MODEL = os.getenv("MODEL")
 
 # 创建客户端
 client = OpenAI(api_key=API_KEY, base_url=BASE_URL)

@@ -10,6 +10,7 @@ def test_get_calculator():
 def test_list_tools():
     tools = list_tools()
     assert "calculator" in tools
+    assert "rag_search" in tools
 
 def test_unknown_tool():
     with pytest.raises(ValueError):
@@ -26,3 +27,9 @@ def test_tool_schema():
     assert "operation" in parameters
     assert "a" in parameters
     assert "b" in parameters
+
+def test_rag_tool_schema():
+    schemas = get_tool_schemas()
+    tool_names = [schema["function"]["name"] for schema in schemas]
+    assert "calculator" in tool_names
+    assert "rag_search" in tool_names

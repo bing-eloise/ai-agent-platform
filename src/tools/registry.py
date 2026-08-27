@@ -1,8 +1,26 @@
 """统一登记项目有哪些 Tool"""
 from src.tools.calculator import calculator
+from src.tools.rag_tool import RAGTool
+from src.rag.knowledge_base import KnowledgeBase
+
+_rag_tool = None
+
+def get_rag_tool() -> RAGTool:
+    """延迟初始化 RAG Tool"""
+    global _rag_tool
+    if _rag_tool is None:
+        knowledge_base = KnowledgeBase("data/test.txt")
+        _rag_tool = RAGTool(knowledge_base)
+    return _rag_tool
+
+def rag_search(question: str) -> str:
+    """查询本地知识库"""
+    rag_tool = get_rag_tool()
+    return rag_tool.query(question)
 
 TOOL_REGISTRY = {
-    "calculator": calculator
+    "calculator": calculator,
+    "rag_search": rag_search
 }
 
 TOOL_SCHEMAS = [
@@ -29,6 +47,23 @@ TOOL_SCHEMAS = [
                     }
                 },
                 "required": ["operation", "a", "b"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "rag_search",
+            "description": "查询项目本地知识库。当用户的问题需要根据项目知识库中的内容回答时使用。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "question": {
+                        "type": "string",
+                        "description": "需要查询知识库的问题"
+                    }
+                },
+                "required": ["question"]
             }
         }
     }

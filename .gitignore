@@ -25,3 +25,13 @@ logs/*.log
 
 # Database
 *.db
+
+# Pytest
+.pytest_cache/
+
+# Local project inspection
+project_tree.txt
+
+# Coverage
+.coverage
+htmlcov/

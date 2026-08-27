@@ -4,11 +4,12 @@ from fastapi.responses import JSONResponse
 from src.api.routes import router
 from src.exceptions import AIChatError, LLMError
 from src.logger import logger
+from config.settings import APP_NAME, VERSION
 
 app = FastAPI(
-    title="Project01 AI Chat API",
-    version="1.0.0",
-    description="AI Chat / RAG / Agent API Service"
+    title=f"{APP_NAME} API",
+    version=VERSION,
+    description="AI Chat / RAG / Multi-Tool Agent / Multimodal API Service"
 )
 
 @app.get("/health")

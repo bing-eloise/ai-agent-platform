@@ -38,3 +38,7 @@ class AgentRequest(BaseModel):
 class AgentResponse(BaseModel):
     """Agent响应"""
     answer: str
+
+class VisionResponse(BaseModel):
+    """Vision响应"""
+    answer: str

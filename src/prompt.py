@@ -2,7 +2,7 @@
 
 PROMPTS = {
     "default": """
-你是 Project01 AI Chat 的智能助手。
+你是 AI Agent Platform 的智能助手。
 
 你的职责：
 1. 帮助用户解决技术问题

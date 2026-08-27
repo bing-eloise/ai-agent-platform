@@ -3,7 +3,7 @@ import os
 
 os.makedirs("logs", exist_ok=True)
 
-logger = logging.getLogger("Project01_AI_Chat")
+logger = logging.getLogger("AI_Agent_Platform")
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
